@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Read Database</title>
+    <!-- Load Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Database Records</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Section</th>
+                    <th>SRN</th>
+                </tr>
+            </thead>
+            <tbody id="records-table-body">
+            </tbody>
+        </table>
+    </div>
+    <!-- Load Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script>
+        window.addEventListener('load', function () {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'http://localhost:5000/read_database_actually');
+            xhr.responseType = 'json';
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    var data = xhr.response;
+                    console.log(data); // Log the data array
+                    for (var i = 0; i < data.length; i++) {
+                        var tr = document.createElement('tr');
+                        var record = data[i];
+                        // Check if the record has the _id property and skip it
+                        if (record.hasOwnProperty('_id')) {
+                            delete record._id;
+                        }
+                        // Populate the table with the remaining properties
+                        for (var key in record) {
+                            if (record.hasOwnProperty(key)) {
+                                var td = document.createElement('td');
+                                td.textContent = record[key];
+                                tr.appendChild(td);
+                            }
+                        }
+                        document.getElementById('records-table-body').appendChild(tr);
+                    }
+                }
+            };
+            xhr.send();
+        });
+    </script>
+    
+</body>
+</html>
